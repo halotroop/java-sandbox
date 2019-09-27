@@ -9,7 +9,7 @@ public class TimeAndTemp
 	public static int dayOfYear, hourOfDay;
 	public static int hours; // Hours past 0:00 on day 0
 	
-	// Player should be at sea level, in a plains biome, in the middle of month 7 (day 195), at midnight (hour 0)
+	// Player should be at sea level, in a plains biome, in the middle of month 7 (day 195), at midnight (0:00)
 	// Sea level is 150
 	// Plains should be located at sea level, and have a very normal temperature value.
 	// A day is 16 hours long, a night is 8 hours long
@@ -17,7 +17,7 @@ public class TimeAndTemp
 	
 	public static void main(String[] args)
 	{
-		setTime(5000);
+		setTimeInDays(195);
 		hourOfDay = getHourOfDay();
 		dayOfYear = getDayOfYear();
 		reportTemp();
@@ -29,27 +29,34 @@ public class TimeAndTemp
 		System.out.println("The day of the year is: " + String.valueOf(dayOfYear));
 		System.out.println("The time of day is: " + String.valueOf(hourOfDay) + ":00");
 		System.out.println("Your player is " + String.valueOf(pt) + " degrees Celcius.");
-		if (pt >= 100 || pt <= 0) System.out.println("They're probably dead!");
-		else System.out.println("They should be fine.");
-		if (pt > 100) System.out.println("They're on boiling!");
-		else if (pt <= 0) System.out.println("They're freezing!");
-		else System.out.println("The temperature is fine.");
+		if (pt >= 50 || pt <= 0)
+		{
+			System.out.println("They're probably dead!");
+			
+			if (pt >= 100)		System.out.println("They're on boiling!");
+			else if (pt <= 0)	System.out.println("They're freezing!");
+		}
+		else
+		{
+			System.out.println("They should be fine.");
+			System.out.println("The temperature is OK.");
+		}
 	}
 	
-	public static void setTime(int newHours)
-	{
-		hours = newHours;
-	}
+	public static void setTime(int days, int newHours)
+	{	hours = ((days - 1) * 24) + newHours;	}
+	
+	public static void setTimeInDays(int days)
+	{	hours = (days- 1) * 24;	}
+	
+	public static void setTimeInHours(int newHours)
+	{	hours = newHours;	}
 	
 	private static int getHourOfDay()
-	{	
-		return hours % 24;
-	}
+	{	return hours % 24;	}
 
 	public static int getDayOfYear()
-	{		
-		return ((hours / 24) % 240) + 1;
-	}
+	{	return ((hours / 24) % 240) + 1;	}
 	
 	public static int getPlayerTemp(int elevation)
 	{
@@ -59,13 +66,6 @@ public class TimeAndTemp
 		else if (hourOfDay < 0)
 			hourOfDay = 0;
 		
-		// Correct the time of year (in days)
-		if (dayOfYear >= 240)
-			dayOfYear = dayOfYear % 240;
-		else if (dayOfYear < 0)
-			dayOfYear = 240 - Math.abs(dayOfYear);
-		if (dayOfYear == 0) dayOfYear++;
-		
 		int fin = 0;
 		
 		if (fin > maxTemp) fin = maxTemp;
@@ -74,29 +74,29 @@ public class TimeAndTemp
 		return fin;
 	}
 	
-	public static float calcDayTemp(int x, int hourOfDay, float f)
+	public static float calcDayTemp(int x, int hourOfDay)
 	{
+		float fineAdjustment = 10;
 		float g = 3;
 		float day = 0;
 		float night = 0;
 		boolean isDay = (hourOfDay <= 4) && (hourOfDay >= 20);
 		
 		
-		day = ((-x*(x-16))*(Math.abs(g)+1))/f;
+		day = ((-x*(x-16))*(Math.abs(g)+1))/fineAdjustment;
 		
-		night = ((-x)*(x-180))/f;
+		night = ((-x)*(x-180))/fineAdjustment;
 		
-		if (isDay)
-			return day;
-		else
-			return night;
+		if (isDay) return day;
+		else return night;
 	}
 	
-	public static float calcGlobalTemp(float f, int dayOfYear)
+	public static float calcGlobalTemp(int dayOfYear)
 	{
+		float fineAdjustment = 1000;
 		int s = 0;
 		
-		s = (int) (((-dayOfYear)*(dayOfYear-180))/f);
+		s = (int) (((-dayOfYear)*(dayOfYear-180))/fineAdjustment);
 		
 		return s;
 	}
