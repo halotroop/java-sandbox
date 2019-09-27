@@ -4,28 +4,30 @@ import org.joml.Math;
 
 public class TimeAndTemp
 {
-	public static int maxTemp = 100;
-	public static int minTemp = -50;
+	public static final double maxTemp = 100;
+	public static final double minTemp = -50;
 	public static int dayOfYear, hourOfDay;
 	public static int hours; // Hours past 0:00 on day 0
+	public static double elevation;
 	
 	// Player should be at sea level, in a plains biome, in the middle of month 7 (day 195), at midnight (0:00)
-	// Sea level is 150
+	// Sea level is 0
 	// Plains should be located at sea level, and have a very normal temperature value.
 	// A day is 16 hours long, a night is 8 hours long
 	// A year is 240 days long
 	
 	public static void main(String[] args)
 	{
+		elevation = 0;
 		setTimeInDays(195);
 		hourOfDay = getHourOfDay();
 		dayOfYear = getDayOfYear();
-		reportTemp();
+		reportTimeAndTemp();
 	}
 	
-	private static void reportTemp()
+	private static void reportTimeAndTemp()
 	{
-		int pt = getPlayerTemp(150);
+		double pt = getPlayerTemp();
 		System.out.println("The day of the year is: " + String.valueOf(dayOfYear));
 		System.out.println("The time of day is: " + String.valueOf(hourOfDay) + ":00");
 		System.out.println("Your player is " + String.valueOf(pt) + " degrees Celcius.");
@@ -58,7 +60,7 @@ public class TimeAndTemp
 	public static int getDayOfYear()
 	{	return ((hours / 24) % 240) + 1;	}
 	
-	public static int getPlayerTemp(int elevation)
+	public static double getPlayerTemp()
 	{
 		// Correct the time of day (in hours)
 		if (hourOfDay >= 24)
@@ -66,7 +68,9 @@ public class TimeAndTemp
 		else if (hourOfDay < 0)
 			hourOfDay = 0;
 		
-		int fin = 0;
+		double fin = 0;
+		
+		fin = (int) (calcDayTemp() * calcGlobalTemp() + calcElevationTemp(1, 1, 1, 1));
 		
 		if (fin > maxTemp) fin = maxTemp;
 		if (fin < minTemp) fin = minTemp;
@@ -74,30 +78,29 @@ public class TimeAndTemp
 		return fin;
 	}
 	
-	public static float calcDayTemp(int x, int hourOfDay)
+	public static double calcElevationTemp(double x, double e, double d, double l)
 	{
-		float fineAdjustment = 10;
-		float g = 3;
-		float day = 0;
-		float night = 0;
+		return (double) ( (-x) * (java.lang.Math.pow((-x-l), 3)) * ((-x) / (java.lang.Math.pow(e, d)) ));
+	}
+	
+	public static double calcDayTemp()
+	{
+		double fineAdjustment = 10;
+		double g = 3;
+		
+		double day = ((-hourOfDay*(hourOfDay-16))*(Math.abs(g)+1))/fineAdjustment;
+		double night = ((-hourOfDay)*(hourOfDay-180))/fineAdjustment;
+		
 		boolean isDay = (hourOfDay <= 4) && (hourOfDay >= 20);
-		
-		
-		day = ((-x*(x-16))*(Math.abs(g)+1))/fineAdjustment;
-		
-		night = ((-x)*(x-180))/fineAdjustment;
 		
 		if (isDay) return day;
 		else return night;
 	}
 	
-	public static float calcGlobalTemp(int dayOfYear)
+	public static double calcGlobalTemp()
 	{
-		float fineAdjustment = 1000;
-		int s = 0;
+		double fineAdjustment = 1000;
 		
-		s = (int) (((-dayOfYear)*(dayOfYear-180))/fineAdjustment);
-		
-		return s;
+		return (int) (((-dayOfYear)*(dayOfYear-180))/fineAdjustment);
 	}
 }
