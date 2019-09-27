@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.halotroop</groupId>
+  <artifactId>java-sandbox</artifactId>
+  <version>0.0</version>
+  <name>Java Sandbox</name>
+  <description>A sandbox to mess with Java inside of</description>
+  
+  <dependencies>
+      <dependency><groupId>org.joml</groupId><artifactId>joml</artifactId><version>1.9.17</version></dependency>
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <release>12</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
